@@ -1,14 +1,16 @@
 {
-  "name": "found-x-server",
+  "name": "greenhaven-server",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Next Level Developer",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.6",

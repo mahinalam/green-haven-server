@@ -13,6 +13,45 @@ const userRegister = catchAsync(async (req, res) => {
     data: user,
   });
 });
+const followAndFollowingUser = catchAsync(async (req, res) => {
+  const { followerId, followingId } = req.body;
+  const user = await UserServices.followAndFollowingUserInto(
+    followerId,
+    followingId
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Successfully followed user.',
+    data: user,
+  });
+});
+
+// unfollow user
+const unFollowUser = catchAsync(async (req, res) => {
+  const { followerId, followingId } = req.body;
+  const user = await UserServices.unFollowUserIntoDB(followerId, followingId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Successfully unfollowed user.',
+    data: user,
+  });
+});
+
+const checkFollower = catchAsync(async (req, res) => {
+  const { followerId, followingId } = req.body;
+  const user = await UserServices.checkFollower(followerId, followingId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Successfully checked follower.',
+    data: user,
+  });
+});
 
 const getAllUsers = catchAsync(async (req, res) => {
   const users = await UserServices.getAllUsersFromDB(req.query);
@@ -36,8 +75,23 @@ const getSingleUser = catchAsync(async (req, res) => {
   });
 });
 
+const deleteUser = catchAsync(async (req, res) => {
+  const user = await UserServices.deleteUserFromDB(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User deleted Successfully',
+    data: user,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
   userRegister,
   getAllUsers,
+  followAndFollowingUser,
+  checkFollower,
+  unFollowUser,
+  deleteUser,
 };

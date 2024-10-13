@@ -4,6 +4,7 @@ import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { USER_ROLE, USER_STATUS } from './user.constant';
 import { IUserModel, TUser } from './user.interface';
+import { UNAVAILABLE_FOR_LEGAL_REASONS } from 'http-status';
 
 const userSchema = new Schema<TUser, IUserModel>(
   {
@@ -30,6 +31,8 @@ const userSchema = new Schema<TUser, IUserModel>(
       required: true,
       select: 0,
     },
+    followers: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
+    following: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
     status: {
       type: String,
       enum: Object.keys(USER_STATUS),
@@ -42,9 +45,18 @@ const userSchema = new Schema<TUser, IUserModel>(
       type: String,
       required: true,
     },
+
     profilePhoto: {
       type: String,
-      default: null
+      default: null,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -69,6 +81,12 @@ userSchema.pre('save', async function (next) {
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
+  next();
+});
+
+userSchema.pre('find', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
   next();
 });
 

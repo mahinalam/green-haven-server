@@ -1,11 +1,15 @@
 import express from 'express';
 import { AuthRoutes } from '../modules/Auth/auth.route';
 import { UserRoutes } from '../modules/User/user.route';
-import { ItemRoutes } from '../modules/Item/item.route';
-import { ItemCategoryRoutes } from '../modules/ItemCategory/itemCategory.route';
 import { ProfileRoutes } from '../modules/Profile/profile.route';
-import { ClaimRequestRoutes } from '../modules/ClaimRequest/claimRequest.route';
-import { MeilisearchRoutes } from '../modules/Meilisearch/meilisearch.routes';
+import { GardeningPostRoutes } from '../modules/GardeningPost/GardeningPost.route';
+import { CommentRoutes } from '../modules/Comment/Comment.route';
+import { CategoryRoutes } from '../modules/Category/category.route';
+import { SavedPostRoutes } from '../modules/SavedPost/savedPost.route';
+// import { PaymentRoutes } from '../modules/Payment/payment.route';
+import { paymentRoutes } from '../modules/Payment/payment.route';
+import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
+// import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 
 const router = express.Router();
 
@@ -14,25 +18,38 @@ const moduleRoutes = [
     path: '/auth',
     route: AuthRoutes,
   },
-  {
-    path: '/item-categories',
-    route: ItemCategoryRoutes,
-  },
-  {
-    path: '/items',
-    route: ItemRoutes,
-  },
-  {
-    path: '/claim-request',
-    route: ClaimRequestRoutes,
-  },
-  {
-    path: '/search-items',
-    route: MeilisearchRoutes,
-  },
+
   {
     path: '/users',
     route: UserRoutes,
+  },
+  {
+    path: '/gardening-posts',
+    route: GardeningPostRoutes,
+  },
+  {
+    path: '/saved-post',
+    route: SavedPostRoutes,
+  },
+  {
+    path: '/comments',
+    route: CommentRoutes,
+  },
+  {
+    path: '/category',
+    route: CategoryRoutes,
+  },
+  {
+    path: '/profile',
+    route: ProfileRoutes,
+  },
+  {
+    path: '/verify-profile',
+    route: VerifyProfileRoutes,
+  },
+  {
+    path: '/payment',
+    route: paymentRoutes,
   },
   {
     path: '/profile',

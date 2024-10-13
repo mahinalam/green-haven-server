@@ -3,6 +3,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import AppError from '../errors/AppError';
 import { USER_ROLE, USER_STATUS } from '../modules/User/user.constant';
+import { ObjectId } from 'mongoose';
 
 // _id: user._id,
 //     name: user.name,
@@ -13,12 +14,13 @@ import { USER_ROLE, USER_STATUS } from '../modules/User/user.constant';
 
 export const createToken = (
   jwtPayload: {
-    _id?: string;
+    _id?: string | ObjectId;
     name: string;
     email: string;
     mobileNumber?: string;
     role: keyof typeof USER_ROLE;
     status: keyof typeof USER_STATUS;
+    profilePhoto?: string;
   },
   secret: string,
   expiresIn: string

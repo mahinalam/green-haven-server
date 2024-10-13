@@ -8,10 +8,4 @@ export const USER_STATUS = {
   BLOCKED: 'BLOCKED',
 } as const;
 
-export const UserSearchableFields = [
-  'name',
-  'email',
-  'phone',
-  'role',
-  'status',
-];
+export const UserSearchableFields = ['name', 'email', 'role', 'status'];

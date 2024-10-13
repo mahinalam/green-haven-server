@@ -55,7 +55,7 @@ export class QueryBuilder<T> {
     let fields = '';
 
     if (this.query?.fields) {
-      fields = (this.query?.fields as string).split(',').join(' ');
+      fields = (this.query?.fields as string).split(',').join(' ') || '-__v';
     }
 
     this.modelQuery = this.modelQuery.select(fields);

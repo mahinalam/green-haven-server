@@ -3,9 +3,15 @@ import config from '../../config';
 import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
 import { catchAsync } from '../../utils/catchAsync';
+import AppError from '../../errors/AppError';
 
 const registerUser = catchAsync(async (req, res) => {
-  const result = await AuthServices.registerUser(req.body);
+  if (!req.file) {
+    throw new AppError(400, 'Please upload an image');
+  }
+  // console.log(req.body);
+  // console.log(req.file);
+  const result = await AuthServices.registerUser(req.file!.path, req.body);
   const { refreshToken, accessToken } = result;
 
   res.cookie('refreshToken', refreshToken, {

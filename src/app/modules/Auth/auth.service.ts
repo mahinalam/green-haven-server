@@ -8,7 +8,7 @@ import { USER_ROLE } from '../User/user.constant';
 import { User } from '../User/user.model';
 import { TLoginUser, TRegisterUser } from './auth.interface';
 
-const registerUser = async (payload: TRegisterUser) => {
+const registerUser = async (image: string, payload: TRegisterUser) => {
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(payload?.email);
 
@@ -17,7 +17,7 @@ const registerUser = async (payload: TRegisterUser) => {
   }
 
   payload.role = USER_ROLE.USER;
-
+  payload.profilePhoto = image;
   //create new user
   const newUser = await User.create(payload);
 
@@ -30,8 +30,9 @@ const registerUser = async (payload: TRegisterUser) => {
     mobileNumber: newUser.mobileNumber,
     role: newUser.role,
     status: newUser.status,
+    profilePhoto: newUser.profilePhoto,
   };
-
+  console.log('jwt payload', jwtPayload);
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
