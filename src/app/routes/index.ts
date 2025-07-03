@@ -9,6 +9,7 @@ import { SavedPostRoutes } from '../modules/SavedPost/savedPost.route';
 // import { PaymentRoutes } from '../modules/Payment/payment.route';
 import { paymentRoutes } from '../modules/Payment/payment.route';
 import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
+import { ReactionRoute } from '../modules/Reaction/reaction.route';
 // import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 
 const router = express.Router();
@@ -54,6 +55,10 @@ const moduleRoutes = [
   {
     path: '/profile',
     route: ProfileRoutes,
+  },
+  {
+    path: '/react',
+    route: ReactionRoute,
   },
 ];
 

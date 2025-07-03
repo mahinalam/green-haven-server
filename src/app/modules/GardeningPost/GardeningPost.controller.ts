@@ -5,6 +5,33 @@ import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { GardeningPostServices } from './GardeningPost.service';
 
+// get all posts
+const getAllGardeningPosts = catchAsync(async (req, res) => {
+  const item = await GardeningPostServices.getAllGardeningPostsFromDB(
+    req.query
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Gardening Posts retrieved successfully',
+    data: item,
+  });
+});
+
+// get single post
+const getSingleGardeningPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const item = await GardeningPostServices.getSingleGardeningPostFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Gardening Post retrieved successfully',
+    data: item,
+  });
+});
+
 const createGardeningPost = catchAsync(async (req, res) => {
   if (!req.files) {
     throw new AppError(400, 'Please upload an image');
@@ -19,19 +46,6 @@ const createGardeningPost = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Gardening Post created successfully',
-    data: item,
-  });
-});
-
-const getAllGardeningPosts = catchAsync(async (req, res) => {
-  const item = await GardeningPostServices.getAllGardeningPostsFromDB(
-    req.query
-  );
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: 'Gardening Post retrieved successfully',
     data: item,
   });
 });
@@ -80,6 +94,7 @@ export const GardeningPostControllers = {
   createGardeningPost,
   getAllGardeningPosts,
   updateLikeStatus,
+  getSingleGardeningPost,
   //   getAllItems,
   //   getItem,
   //   updateItem,

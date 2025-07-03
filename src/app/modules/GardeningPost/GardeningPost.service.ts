@@ -47,10 +47,11 @@ const getUserGardeningPostsFromDB = async (userId: string) => {
 };
 
 const getSingleGardeningPostFromDB = async (postId: string) => {
-  const result = await GardeningPost.findById(postId)
-    .populate('user')
-    // .populate('category');
-    .populate('comments');
+  console.log({ postId });
+  const result = await GardeningPost.findById(postId);
+  // .populate('user')
+  // // .populate('category');
+  // .populate('comments');
   return result;
 };
 

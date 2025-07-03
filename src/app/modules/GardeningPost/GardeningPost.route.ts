@@ -13,7 +13,8 @@ import { GardeningPostControllers } from './GardeningPost.controller';
 // import { GardeningPostControllers } from '../SavedPost/savedPost.controller';
 
 const router = express.Router();
-
+router.get('/', GardeningPostControllers.getAllGardeningPosts);
+router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 router.post(
   '/',
   auth(USER_ROLE.USER),
@@ -26,7 +27,6 @@ router.post(
   GardeningPostControllers.createGardeningPost
 );
 
-router.get('/', GardeningPostControllers.getAllGardeningPosts);
 // router.get(
 //   '/get-user-posts/:id',
 //   GardeningPostControllers.getUserGardeningPosts
