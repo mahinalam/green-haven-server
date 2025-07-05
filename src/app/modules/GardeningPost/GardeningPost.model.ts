@@ -17,12 +17,7 @@ const GardeningPostSchema: Schema = new Schema(
     comments: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: [] },
     ],
-    upVotes: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] },
-    ],
-    downVotes: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] },
-    ],
+
     isPremium: { type: Boolean, default: false },
     favoriteCount: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },

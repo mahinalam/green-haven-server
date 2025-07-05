@@ -32,6 +32,7 @@ const getSingleGardeningPost = catchAsync(async (req, res) => {
   });
 });
 
+// create post
 const createGardeningPost = catchAsync(async (req, res) => {
   if (!req.files) {
     throw new AppError(400, 'Please upload an image');
@@ -61,7 +62,7 @@ const createGardeningPost = catchAsync(async (req, res) => {
 //     data: item,
 //   });
 // });
-
+// update like status
 const updateLikeStatus = catchAsync(async (req, res) => {
   const { postId, userId, status } = req.body;
   const updatedItem = await GardeningPostServices.updatePostLikeStatusIntoDB(
@@ -78,25 +79,43 @@ const updateLikeStatus = catchAsync(async (req, res) => {
   });
 });
 
-// const deleteGardeningPost = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   await GardeningPostServices.deleteGardeningPostFromDB(id);
+// delete post
+const deleteGardeningPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  await GardeningPostServices.deleteGardeningPost(id);
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Gardening Post deleted successfully',
-//     data: null,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Gardening Post deleted successfully',
+    data: null,
+  });
+});
+
+// update post
+// get single post
+const updateGardeningPost = catchAsync(async (req, res) => {
+  const item = await GardeningPostServices.updateGardeningPostInDB(
+    req.body,
+    req.files as TImageFiles
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Gardening Post uppdated successfully',
+    data: item,
+  });
+});
 
 export const GardeningPostControllers = {
   createGardeningPost,
   getAllGardeningPosts,
   updateLikeStatus,
   getSingleGardeningPost,
+  updateGardeningPost,
   //   getAllItems,
   //   getItem,
   //   updateItem,
-  // deleteGardeningPost,
+  deleteGardeningPost,
 };

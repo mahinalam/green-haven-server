@@ -3,27 +3,31 @@ import httpStatus from 'http-status';
 import { QueryBuilder } from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { TImageFiles } from '../../interfaces/image.interface';
-import { IGardeningPost } from './GardeningPost.interface';
-import GardeningPost from './GardeningPost.model';
 import { User } from '../User/user.model';
+import { IGuide } from './Blogs.interface';
+import Guide from './Blogs.model';
+import { ObjectId } from 'mongoose';
 
-const createGardeningPostIntoDB = async (
-  payload: IGardeningPost,
+const createGuideIntoDB = async (
+  authorId: ObjectId | string,
+  payload: IGuide,
   images: TImageFiles
 ) => {
   const { itemImages } = images;
   payload.images = itemImages.map((image) => image.path);
 
-  const result = await GardeningPost.create(payload);
+  const newPayload = {
+    ...payload,
+    author: authorId,
+  };
+
+  const result = await Guide.create(newPayload);
 
   return result;
 };
 
-const getAllGardeningPostsFromDB = async (query: Record<string, unknown>) => {
-  const gardeningPostQuery = new QueryBuilder(
-    GardeningPost.find().populate('user').populate('category'),
-    query
-  )
+const getAllGuideFromDB = async (query: Record<string, unknown>) => {
+  const gardeningPostQuery = new QueryBuilder(Guide.find(), query)
     .filter()
     .sort()
     // .paginate()
@@ -56,37 +60,17 @@ const getSingleGardeningPostFromDB = async (postId: string) => {
 };
 
 const updateGardeningPostInDB = async (
-  payload: Partial<IGardeningPost>,
-  images: TImageFiles
+  postId: string,
+  payload: Partial<IGardeningPost>
 ) => {
-  const postId = (payload as any).postId;
-  // check si post exists
-  const post = await GardeningPost.findOne({ _id: postId, isDeleted: false });
-  if (!post) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Gardening post does not exixts!');
-  }
-  const { itemImages } = images;
-  if (itemImages.length > 0) {
-    payload.images = itemImages.map((image) => image.path);
-  }
   const result = await GardeningPost.findByIdAndUpdate(postId, payload, {
     new: true,
   });
-
-  return result;
-};
-
-// delete post
-const deleteGardeningPost = async (postId: string) => {
-  // check is gardening post exists
-  const post = await GardeningPost.findOne({ _id: postId, isDeleted: false });
-  if (!post) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Gardening post does not exixts!');
-  }
-  const result = await GardeningPost.updateOne(
-    { _id: postId },
-    { isDeleted: true }
-  );
+  // if (result) {
+  //   await addDocumentToIndex(result, 'items');
+  // } else {
+  //   throw new Error(`Item with ID ${itemId} not found.`);
+  // }
   return result;
 };
 
@@ -206,12 +190,12 @@ const updatePostLikeStatusIntoDB = async (
 //   return result;
 // };
 
-export const GardeningPostServices = {
-  createGardeningPostIntoDB,
-  getAllGardeningPostsFromDB,
-  getSingleGardeningPostFromDB,
-  getUserGardeningPostsFromDB,
-  updateGardeningPostInDB,
-  deleteGardeningPost,
-  updatePostLikeStatusIntoDB,
+export const GuideService = {
+  createGuideIntoDB,
+  getAllGuideFromDB,
+  //   getSingleGardeningPostFromDB,
+  //   getUserGardeningPostsFromDB,
+  //   updateGardeningPostInDB,
+  //   // deleteGardeningPostFromDB,
+  //   updatePostLikeStatusIntoDB,
 };

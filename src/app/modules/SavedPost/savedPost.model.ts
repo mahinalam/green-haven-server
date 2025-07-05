@@ -14,7 +14,6 @@ const SavedPostSchema: Schema = new Schema(
       ref: 'GardeningPost',
       required: true,
     },
-    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

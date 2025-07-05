@@ -7,34 +7,22 @@ import { ImageFilesArrayZodSchema } from '../../zod/image.validation';
 
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../User/user.constant';
-import { GardeningPostControllers } from './GardeningPost.controller';
+import { GuideController } from './Blogs.controller';
 
 // import { GardeningPostValidationSchema } from './GardeningPost.validation';
 // import { GardeningPostControllers } from '../SavedPost/savedPost.controller';
 
 const router = express.Router();
-router.get('/', GardeningPostControllers.getAllGardeningPosts);
-router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
+router.get('/', GuideController.getAllGuides);
+// router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 router.post(
   '/',
   auth(USER_ROLE.USER),
   multerUpload.fields([{ name: 'itemImages' }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
-  //   validateRequest(
-  //     GardeningPostValidationSchema.createGardeningPostValidationSchema
-  //   ),
-  GardeningPostControllers.createGardeningPost
+  GuideController.createGuide
 );
-router.put(
-  '/',
-  multerUpload.fields([{ name: 'itemImages' }]),
-  parseBody,
-  //   auth(USER_ROLE.USER),
-  //   validateRequest(ItemValidation.updateItemValidationSchema),
-  GardeningPostControllers.updateGardeningPost
-);
-router.delete('/:id', GardeningPostControllers.deleteGardeningPost);
 
 // router.get(
 //   '/get-user-posts/:id',
@@ -43,12 +31,19 @@ router.delete('/:id', GardeningPostControllers.deleteGardeningPost);
 
 // router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 
-router.patch(
-  '/',
-  //   auth(USER_ROLE.USER),
-  //   validateRequest(ItemValidation.updateItemValidationSchema),
-  GardeningPostControllers.updateLikeStatus
-);
+// router.put(
+//   '/:id',
+//   //   auth(USER_ROLE.USER),
+//   //   validateRequest(ItemValidation.updateItemValidationSchema),
+//   GardeningPostControllers.updateGardeningPost
+// );
+
+// router.patch(
+//   '/',
+//   //   auth(USER_ROLE.USER),
+//   //   validateRequest(ItemValidation.updateItemValidationSchema),
+//   GardeningPostControllers.updateLikeStatus
+// );
 
 // router.delete(
 //   '/:id',
@@ -56,4 +51,4 @@ router.patch(
 //   GardeningPostControllers.deleteGardeningPost
 // );
 
-export const GardeningPostRoutes = router;
+export const GuideRoute = router;

@@ -5,9 +5,26 @@ import AppError from '../../errors/AppError';
 // import GardeningPost from './GardeningPost.model';
 import { ISavedPost } from './savedPost.interface';
 import SavedPost from './savedPost.model';
+import GardeningPost from '../GardeningPost/GardeningPost.model';
 
-const createSavedPostIntoDB = async (payload: ISavedPost) => {
-  const isSavedPostExists = await SavedPost.findById(payload.post);
+const createSavedPostIntoDB = async (userId: string, payload: ISavedPost) => {
+  // check is post exists
+  const post = await GardeningPost.findById(payload.post);
+
+  // if not throw exception
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Saved post already exists!');
+  }
+
+  // check is post is already deleted
+  if (post.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'post already deleted!');
+  }
+  // chcek is sdaved post exists
+  const isSavedPostExists = await SavedPost.findOne({
+    user: userId,
+    post: payload.post,
+  });
   if (isSavedPostExists) {
     throw new AppError(httpStatus.NOT_FOUND, 'Saved post already exists!');
   }
