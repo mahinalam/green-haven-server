@@ -10,7 +10,7 @@ import { SavedPostRoutes } from '../modules/SavedPost/savedPost.route';
 import { paymentRoutes } from '../modules/Payment/payment.route';
 import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 import { ReactionRoute } from '../modules/Reaction/reaction.route';
-import { GuideRoute } from '../modules/Blogs/Blogs.route';
+import { BlogRoute } from '../modules/Blogs/Blogs.route';
 // import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 
 const router = express.Router();
@@ -30,7 +30,7 @@ const moduleRoutes = [
     route: GardeningPostRoutes,
   },
   {
-    path: '/saved-post',
+    path: '/wishlist',
     route: SavedPostRoutes,
   },
   {
@@ -63,7 +63,7 @@ const moduleRoutes = [
   },
   {
     path: '/blogs',
-    route: GuideRoute,
+    route: BlogRoute,
   },
 ];
 

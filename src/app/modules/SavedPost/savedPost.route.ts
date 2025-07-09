@@ -11,6 +11,8 @@ import { SavedPostControllers } from './savedPost.controller';
 
 const router = express.Router();
 
+router.get('/', auth(USER_ROLE.USER), SavedPostControllers.getAllUserSavedPost);
+
 router.post(
   '/',
   //   auth(USER_ROLE.USER),
@@ -21,7 +23,6 @@ router.post(
   SavedPostControllers.createSavedPost
 );
 
-router.get('/', SavedPostControllers.getAllUserSavedPost);
 // router.get(
 //   '/get-user-posts/:id',
 //   GardeningPostControllers.getUserGardeningPosts
@@ -29,13 +30,10 @@ router.get('/', SavedPostControllers.getAllUserSavedPost);
 
 // router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 
-// router.put(
-//   '/:id',
-//   //   auth(USER_ROLE.USER),
-//   //   validateRequest(ItemValidation.updateItemValidationSchema),
-//   GardeningPostControllers.updateGardeningPost
-// );
-
-// router.delete('/:id', auth(USER_ROLE.USER), ItemControllers.deleteItem);
+router.delete(
+  '/:id',
+  auth(USER_ROLE.USER),
+  SavedPostControllers.deleteSavedPost
+);
 
 export const SavedPostRoutes = router;

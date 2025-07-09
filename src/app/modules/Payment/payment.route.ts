@@ -6,11 +6,16 @@ import { USER_ROLE } from '../User/user.constant';
 
 const router = Router();
 
-router.post('/confirmation', paymentControler.confirmationController);
 router.get(
   '/get-all-payments',
   auth(USER_ROLE.ADMIN),
   paymentControler.getAllPayments
 );
+router.get(
+  '/isVerified',
+  auth(USER_ROLE.USER),
+  paymentControler.isUserVerified
+);
+router.post('/confirmation', paymentControler.confirmationController);
 
 export const paymentRoutes = router;

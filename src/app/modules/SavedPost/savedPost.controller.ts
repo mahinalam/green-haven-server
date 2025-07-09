@@ -28,64 +28,20 @@ const getAllUserSavedPost = catchAsync(async (req, res) => {
   });
 });
 
-// const getUserGardeningPosts = catchAsync(async (req, res) => {
-//   const item = await GardeningPostServices.getUserGardeningPostsFromDB(
-//     req.params.id
-//   );
+const deleteSavedPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  await SavedPostServices.deleteSavedPostFromDB(id);
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'User Gardening posts retrieved successfully',
-//     data: item,
-//   });
-// });
-
-// const getSingleGardeningPost = catchAsync(async (req, res) => {
-//   const itemId = req.params.id;
-//   const item = await GardeningPostServices.getSingleGardeningPostFromDB(itemId);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Gardening post retrieved successfully',
-//     data: item,
-//   });
-// });
-
-// const updateGardeningPost = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   const updatedItem = await GardeningPostServices.updateGardeningPostInDB(
-//     id,
-//     req.body
-//   );
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Gardening Post updated successfully',
-//     data: updatedItem,
-//   });
-// });
-
-// const deleteItem = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   await ItemServices.deleteItemFromDB(id);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Item deleted successfully',
-//     data: null,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Saved post deleted successfully',
+    data: null,
+  });
+});
 
 export const SavedPostControllers = {
   createSavedPost,
   getAllUserSavedPost,
-  //   getAllGardeningPosts,
-  //   getSingleGardeningPost,
-  //   getUserGardeningPosts,
-  //   updateGardeningPost,
-  //   //   deleteItem,
+  deleteSavedPost,
 };

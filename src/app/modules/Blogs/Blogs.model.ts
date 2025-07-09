@@ -9,6 +9,11 @@ const blogSchema: Schema = new Schema(
       ref: 'User',
       required: true,
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
     title: { type: String, required: true, trim: true },
     content: { type: String, required: true },
     images: { type: [String], default: [] },
@@ -17,6 +22,7 @@ const blogSchema: Schema = new Schema(
       enum: ['pending', 'approved', 'rejected'],
       default: 'approved',
     },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -32,6 +38,6 @@ blogSchema.pre('findOne', function (next) {
   next();
 });
 
-const Guide = mongoose.model<IGuide>('Blog', blogSchema);
+const Blog = mongoose.model<IGuide>('Blog', blogSchema);
 
-export default Guide;
+export default Blog;

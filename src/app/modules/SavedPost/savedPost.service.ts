@@ -83,18 +83,28 @@ const getAllUserSavedPostsFromDB = async (query: Record<string, unknown>) => {
 //   return result;
 // };
 
-// const deleteItemFromDB = async (itemId: string) => {
-//   const result = await Item.findByIdAndDelete(itemId);
-//   // const deletedItemId = result?._id;
-//   // if (deletedItemId) {
-//   //   await deleteDocumentFromIndex('items', deletedItemId.toString());
-//   // }
-//   return result;
-// };
+// delete wishlist item
+const deleteSavedPostFromDB = async (wishlistId: string) => {
+  console.log({ wishlistId });
+  // check is wishlist item exists
+  const post = await SavedPost.findOne({
+    _id: wishlistId,
+    isDeleted: false,
+  }).select('_id');
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Wishlist item does not exixts!');
+  }
+  const result = await SavedPost.updateOne(
+    { _id: wishlistId },
+    { isDeleted: true }
+  );
+  return result;
+};
 
 export const SavedPostServices = {
   createSavedPostIntoDB,
   getAllUserSavedPostsFromDB,
+  deleteSavedPostFromDB,
   //   getSingleGardeningPostFromDB,
   //   getUserGardeningPostsFromDB,
   //   updateGardeningPostInDB,

@@ -5,6 +5,8 @@ import { verifyPayment } from './payment.utils';
 import { readFileSync } from 'fs';
 import { Payment } from './payment.model';
 import { User } from '../User/user.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const confirmationService = async (transactionId: string, status: string) => {
@@ -48,7 +50,14 @@ const getAllPaymentsFromDB = async () => {
   return result;
 };
 
+// check is user verified
+const isUserVerifiedFromDB = async (userId: string) => {
+  const result = await Payment.findOne({ userId });
+  return result;
+};
+
 export const paymentServices = {
   confirmationService,
   getAllPaymentsFromDB,
+  isUserVerifiedFromDB,
 };

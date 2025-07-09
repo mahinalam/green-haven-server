@@ -13,13 +13,7 @@ const GardeningPostSchema: Schema = new Schema(
       required: true,
     },
     images: { type: [String], default: [] },
-    votes: { type: Number, default: 0 },
-    comments: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: [] },
-    ],
-
     isPremium: { type: Boolean, default: false },
-    favoriteCount: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
     status: {
       type: String,

@@ -61,13 +61,30 @@ export class QueryBuilder<T> {
     this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
+  // filter() {
+  //   const queryObj = { ...this.query };
+  //   const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
+
+  //   excludeFields.forEach((e) => delete queryObj[e]);
+
+  //   this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+
+  //   return this;
+  // }
+
   filter() {
     const queryObj = { ...this.query };
     const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
 
     excludeFields.forEach((e) => delete queryObj[e]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+    // Always include isDeleted: false in the filter
+    const filterConditions: FilterQuery<T & { isDeleted: boolean }> = {
+      ...queryObj,
+      isDeleted: false,
+    };
+
+    this.modelQuery = this.modelQuery.find(filterConditions);
 
     return this;
   }

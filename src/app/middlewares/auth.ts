@@ -22,10 +22,10 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
       config.jwt_access_secret as string
     ) as JwtPayload;
 
-    const { role, email, iat } = decoded;
+    const { role, email, iat, _id } = decoded;
 
     // checking if the user is exist
-    const user = await User.isUserExistsByEmail(email);
+    const user = await User.findById(_id);
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -33,9 +33,16 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
     // checking if the user is already deleted
 
     const status = user?.status;
+    const isDeleted = user.isDeleted;
 
     if (status === 'BLOCKED') {
       throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked !');
+    }
+    if (isDeleted) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        'This user is already deleted !'
+      );
     }
 
     if (

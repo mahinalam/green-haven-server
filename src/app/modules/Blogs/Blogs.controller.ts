@@ -3,11 +3,11 @@ import AppError from '../../errors/AppError';
 import { TImageFiles } from '../../interfaces/image.interface';
 import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { GuideService } from './Blogs.service';
+import { BlogService } from './Blogs.service';
 
 // get all posts
 const getAllGuides = catchAsync(async (req, res) => {
-  const item = await GuideService.getAllGuideFromDB(req.query);
+  const item = await BlogService.getAllGuideFromDB(req.query);
 
   sendResponse(res, {
     success: true,
@@ -22,7 +22,7 @@ const createGuide = catchAsync(async (req, res) => {
     throw new AppError(400, 'Please upload an image');
   }
   const { _id } = req.user;
-  const item = await GuideService.createGuideIntoDB(
+  const item = await BlogService.createGuideIntoDB(
     _id,
     req.body,
     req.files as TImageFiles
@@ -32,6 +32,32 @@ const createGuide = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Guide Post created successfully',
+    data: item,
+  });
+});
+
+// delete blog
+const deleteBlog = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  await BlogService.deleteBlogFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Blog deleted successfully',
+    data: null,
+  });
+});
+
+// get users blogs
+const getUsersBlogs = catchAsync(async (req, res) => {
+  const { _id } = req.user;
+  const item = await BlogService.getUserBlogsFromDB(_id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Blogs retrieved successfully',
     data: item,
   });
 });
@@ -61,37 +87,26 @@ const getSingleGardeningPost = catchAsync(async (req, res) => {
 //   });
 // });
 
-const updateLikeStatus = catchAsync(async (req, res) => {
-  const { postId, userId, status } = req.body;
-  const updatedItem = await GardeningPostServices.updatePostLikeStatusIntoDB(
-    postId,
-    userId,
-    status
+// update blog
+const updateBlog = catchAsync(async (req, res) => {
+  const item = await BlogService.updateBlogIntoDB(
+    req.body,
+    req.files as TImageFiles
   );
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: 'Vote addeded successfully',
-    data: updatedItem,
+    message: 'Blog uppdated successfully',
+    data: item,
   });
 });
-
-// const deleteGardeningPost = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   await GardeningPostServices.deleteGardeningPostFromDB(id);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Gardening Post deleted successfully',
-//     data: null,
-//   });
-// });
-
-export const GuideController = {
+export const BlogController = {
   createGuide,
   getAllGuides,
+  deleteBlog,
+  getUsersBlogs,
+  updateBlog,
   //   getAllItems,
   //   getItem,
   //   updateItem,

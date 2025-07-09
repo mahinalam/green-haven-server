@@ -7,13 +7,14 @@ import { ImageFilesArrayZodSchema } from '../../zod/image.validation';
 
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../User/user.constant';
-import { GuideController } from './Blogs.controller';
+import { BlogController } from './Blogs.controller';
 
 // import { GardeningPostValidationSchema } from './GardeningPost.validation';
 // import { GardeningPostControllers } from '../SavedPost/savedPost.controller';
 
 const router = express.Router();
-router.get('/', GuideController.getAllGuides);
+router.get('/', BlogController.getAllGuides);
+router.get('/user-blogs', auth(USER_ROLE.USER), BlogController.getUsersBlogs);
 // router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 router.post(
   '/',
@@ -21,22 +22,18 @@ router.post(
   multerUpload.fields([{ name: 'itemImages' }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
-  GuideController.createGuide
+  BlogController.createGuide
 );
-
-// router.get(
-//   '/get-user-posts/:id',
-//   GardeningPostControllers.getUserGardeningPosts
-// );
 
 // router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 
-// router.put(
-//   '/:id',
-//   //   auth(USER_ROLE.USER),
-//   //   validateRequest(ItemValidation.updateItemValidationSchema),
-//   GardeningPostControllers.updateGardeningPost
-// );
+router.put(
+  '/',
+  multerUpload.fields([{ name: 'itemImages' }]),
+  parseBody,
+  auth(USER_ROLE.USER),
+  BlogController.updateBlog
+);
 
 // router.patch(
 //   '/',
@@ -45,10 +42,6 @@ router.post(
 //   GardeningPostControllers.updateLikeStatus
 // );
 
-// router.delete(
-//   '/:id',
-//   //  auth(USER_ROLE.USER),
-//   GardeningPostControllers.deleteGardeningPost
-// );
+router.delete('/:id', auth(USER_ROLE.USER), BlogController.deleteBlog);
 
-export const GuideRoute = router;
+export const BlogRoute = router;
