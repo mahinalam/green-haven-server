@@ -8,14 +8,14 @@ import { CommentControllers } from './Comment.controller';
 
 const router = express.Router();
 
+router.get('/', auth(USER_ROLE.USER), CommentControllers.getAllComments);
+
 router.post(
   '/',
-  //   auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER),
   validateRequest(CommentValidationSchema.createCommentValidationSchema),
   CommentControllers.createComment
 );
-
-router.get('/', CommentControllers.getAllComments);
 
 // router.get('/:id', ItemControllers.getItem);
 

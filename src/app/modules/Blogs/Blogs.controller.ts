@@ -62,15 +62,15 @@ const getUsersBlogs = catchAsync(async (req, res) => {
   });
 });
 
-// get single post
-const getSingleGardeningPost = catchAsync(async (req, res) => {
+// get single blog
+const getSingleBlog = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const item = await GardeningPostServices.getSingleGardeningPostFromDB(id);
+  const item = await BlogService.getSingleBlog(id);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: 'Gardening Post retrieved successfully',
+    message: 'Blog retrieved successfully',
     data: item,
   });
 });
@@ -107,6 +107,7 @@ export const BlogController = {
   deleteBlog,
   getUsersBlogs,
   updateBlog,
+  getSingleBlog,
   //   getAllItems,
   //   getItem,
   //   updateItem,

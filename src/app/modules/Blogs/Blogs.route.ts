@@ -15,7 +15,7 @@ import { BlogController } from './Blogs.controller';
 const router = express.Router();
 router.get('/', BlogController.getAllGuides);
 router.get('/user-blogs', auth(USER_ROLE.USER), BlogController.getUsersBlogs);
-// router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
+router.get('/:id', auth(USER_ROLE.USER), BlogController.getSingleBlog);
 router.post(
   '/',
   auth(USER_ROLE.USER),

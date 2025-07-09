@@ -6,7 +6,8 @@ import sendResponse from '../../utils/sendResponse';
 import { CommentServices } from './Comment.service';
 
 const createComment = catchAsync(async (req, res) => {
-  const comment = await CommentServices.createCommentIntoDB(req.body);
+  const { _id } = req.user;
+  const comment = await CommentServices.createCommentIntoDB(_id, req.body);
 
   sendResponse(res, {
     success: true,

@@ -10,7 +10,6 @@ const objectIdSchema = z.string().refine((val) => Types.ObjectId.isValid(val), {
 const createCommentValidationSchema = z.object({
   body: z.object({
     post: objectIdSchema,
-    user: objectIdSchema,
     content: z.string().min(1, { message: 'Content is required' }),
     replies: z.array(objectIdSchema).optional(), // Array of ObjectIds for nested replies (optional)
     isDeleted: z.boolean().optional().default(false), // Soft delete flag, default is false

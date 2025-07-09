@@ -21,47 +21,23 @@ import Comment from './Comment.model';
 
 import { startSession } from 'mongoose';
 
-const createCommentIntoDB = async (payload: IComment) => {
-  const session = await startSession();
-  session.startTransaction();
-
-  try {
-    // Create the comment
-    const result = await Comment.create([payload], { session });
-
-    if (!result || result.length === 0) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create comment');
-    }
-
-    // Update the GardeningPost by adding the comment _id to the comments array
-    const updateGardeningPostCommentField =
-      await GardeningPost.findByIdAndUpdate(
-        payload.post,
-        { $addToSet: { comments: result[0].user } }, // Add the comment _id
-        { new: true, session } // `new: true` returns the updated document
-      );
-
-    if (!updateGardeningPostCommentField) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to update GardeningPost with the new comment'
-      );
-    }
-
-    // Commit the transaction
-    await session.commitTransaction();
-    session.endSession();
-
-    return result[0]; // Return the created comment
-  } catch (error) {
-    // Abort the transaction in case of error
-    await session.abortTransaction();
-    session.endSession();
-
-    // Log and rethrow the error for further handling
-    console.error('Error creating comment and updating post:', error);
-    throw error;
+const createCommentIntoDB = async (userId: string, payload: any) => {
+  // check is post exists
+  const post = await GardeningPost.findOne({
+    _id: payload.post,
+    isDeleted: false,
+  });
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Gardening post does not exixts!');
   }
+
+  const newPayload = {
+    ...payload,
+    user: userId,
+  };
+
+  const result = await Comment.create(newPayload);
+  return result;
 };
 
 const getAllCommentsFromDB = async (query: Record<string, unknown>) => {

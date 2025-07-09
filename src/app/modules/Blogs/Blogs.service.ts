@@ -70,12 +70,19 @@ const getUserBlogsFromDB = async (userId: string) => {
   return result;
 };
 
-const getSingleGardeningPostFromDB = async (postId: string) => {
-  console.log({ postId });
-  const result = await GardeningPost.findById(postId);
-  // .populate('user')
-  // // .populate('category');
-  // .populate('comments');
+const getSingleBlog = async (blogId: string) => {
+  // check is blog exists
+
+  const blog = await Blog.findById(blogId);
+  if (!blog) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Blog does not exixts!');
+  }
+  if (blog.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Blog already deleted!');
+  }
+  const result = await Blog.findOne({ _id: blogId, isDeleted: false }).populate(
+    'author'
+  );
   return result;
 };
 
@@ -222,9 +229,5 @@ export const BlogService = {
   deleteBlogFromDB,
   getUserBlogsFromDB,
   updateBlogIntoDB,
-  //   getSingleGardeningPostFromDB,
-  //   getUserGardeningPostsFromDB,
-  //   updateGardeningPostInDB,
-  //   // deleteGardeningPostFromDB,
-  //   updatePostLikeStatusIntoDB,
+  getSingleBlog,
 };
