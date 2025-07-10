@@ -10,7 +10,12 @@ import { parseBody } from '../../middlewares/bodyParser';
 const router = express.Router();
 
 export const UserRoutes = router;
-
+router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
+router.get(
+  '/single-user',
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  UserControllers.getSingleUser
+);
 router.post(
   '/create-user',
   auth(USER_ROLE.ADMIN),
@@ -23,8 +28,7 @@ router.post(
 
   UserControllers.checkFollower
 );
-router.get('/', UserControllers.getAllUsers);
-router.get('/:id', UserControllers.getSingleUser);
+
 router.put('/follow-users', UserControllers.followAndFollowingUser);
 router.put('/unfollow-users', UserControllers.unFollowUser);
 router.post;

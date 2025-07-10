@@ -132,15 +132,9 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleUserFromDB = async (id: string) => {
-  const user = await User.findById(id)
-    .populate({
-      path: 'followers',
-      model: 'User', // Populate followers from the 'User' collection
-    })
-    .populate({
-      path: 'following',
-      model: 'User', // Populate following from the 'User' collection
-    });
+  const user = await User.findById(id).select(
+    '_id name role email profilePhoto mobileNumber'
+  );
   console.log('user', user);
   return user;
 };
