@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
-import { QueryBuilder } from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { TImageFiles } from '../../interfaces/image.interface';
-import { User } from '../User/user.model';
 import { IReaction } from './reaction.interface';
 import Reaction from './reaction.model';
 import GardeningPost from '../GardeningPost/GardeningPost.model';
 import { ObjectId, Types } from 'mongoose';
 
-export const getReactionCounts = async (postId: ObjectId | string) => {
-  console.log({ postId });
+// export const getReactionCounts = async (postId: ObjectId | string) => { adjust the import
+
+export const getReactionCounts = async (postId: Types.ObjectId | string) => {
   const objectId = new Types.ObjectId(postId);
 
   const result = await Reaction.aggregate([
@@ -21,17 +19,52 @@ export const getReactionCounts = async (postId: ObjectId | string) => {
       },
     },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+      },
+    },
+    {
+      $unwind: '$user',
+    },
+    {
       $group: {
-        _id: '$type', // group by "like" or "dislike"
+        _id: '$type', // like or dislike
         count: { $sum: 1 },
+        users: {
+          $push: {
+            _id: '$user._id',
+            name: '$user.name',
+            email: '$user.email',
+            avatar: '$user.avatar',
+          },
+        },
+        postId: { $first: '$post' }, // still grab post ID from one of the grouped docs
       },
     },
   ]);
 
-  // Convert array to object: { like: X, dislike: Y }
-  const counts = { like: 0, dislike: 0 };
+  // Convert the result into a consistent object format
+  const counts: Record<
+    string,
+    {
+      count: number;
+      users: { _id: string; name: string; email: string; avatar: string }[];
+      postId: string;
+    }
+  > = {
+    like: { count: 0, users: [], postId: objectId.toString() },
+    dislike: { count: 0, users: [], postId: objectId.toString() },
+  };
+
   result.forEach((r) => {
-    (counts as any)[r._id] = r.count;
+    counts[r._id] = {
+      count: r.count,
+      users: r.users,
+      postId: r.postId?.toString() ?? objectId.toString(), // fallback if postId is missing
+    };
   });
 
   return counts;
@@ -52,6 +85,7 @@ const createReaction = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Post not exists!');
   }
 
+  console.log({ post });
   // check is reaction exists
   const reaction = await Reaction.findOne({
     post: payload.post,
