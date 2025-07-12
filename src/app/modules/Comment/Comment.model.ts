@@ -16,6 +16,17 @@ const CommentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+CommentSchema.pre('find', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
+  next();
+});
+CommentSchema.pre('findOne', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
+  next();
+});
+
 const Comment = mongoose.model<IComment>('Comment', CommentSchema);
 
 export default Comment;
