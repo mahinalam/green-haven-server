@@ -89,6 +89,11 @@ userSchema.pre('find', function (next) {
   this.where({ isDeleted: false });
   next();
 });
+userSchema.pre('findOne', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
+  next();
+});
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
   return await User.findOne({ email }).select('+password');

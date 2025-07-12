@@ -6,6 +6,7 @@ import { TImageFiles } from '../../interfaces/image.interface';
 import { IGardeningPost } from './GardeningPost.interface';
 import GardeningPost from './GardeningPost.model';
 import { User } from '../User/user.model';
+import { postSearchableFields } from './GardeningPost.constant';
 
 const createGardeningPostIntoDB = async (
   payload: IGardeningPost,
@@ -21,12 +22,18 @@ const createGardeningPostIntoDB = async (
 
 const getAllGardeningPostsFromDB = async (query: Record<string, unknown>) => {
   const gardeningPostQuery = new QueryBuilder(
-    GardeningPost.find().populate('user').populate('category'),
+    GardeningPost.find()
+      .populate({
+        path: 'user',
+        select: '_id name email mobileNumber profilePhoto role',
+      })
+      .populate({ path: 'category', select: '_id name' }),
     query
   )
     .filter()
     .sort()
-    // .paginate()
+    .search(postSearchableFields)
+    .fields()
     .fields();
 
   const result = await gardeningPostQuery.modelQuery;

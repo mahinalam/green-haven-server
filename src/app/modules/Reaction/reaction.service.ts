@@ -5,12 +5,18 @@ import { IReaction } from './reaction.interface';
 import Reaction from './reaction.model';
 import GardeningPost from '../GardeningPost/GardeningPost.model';
 import { ObjectId, Types } from 'mongoose';
+import Comment from '../Comment/Comment.model';
 
 // export const getReactionCounts = async (postId: ObjectId | string) => { adjust the import
 
 export const getReactionCounts = async (postId: Types.ObjectId | string) => {
   const objectId = new Types.ObjectId(postId);
 
+  const commentsCount = await Comment.countDocuments({
+    post: postId,
+    isDeleted: false,
+  });
+  console.log('comments', commentsCount);
   const result = await Reaction.aggregate([
     {
       $match: {
@@ -47,16 +53,10 @@ export const getReactionCounts = async (postId: Types.ObjectId | string) => {
   ]);
 
   // Convert the result into a consistent object format
-  const counts: Record<
-    string,
-    {
-      count: number;
-      users: { _id: string; name: string; email: string; avatar: string }[];
-      postId: string;
-    }
-  > = {
+  const counts: Record<string, any> = {
     like: { count: 0, users: [], postId: objectId.toString() },
     dislike: { count: 0, users: [], postId: objectId.toString() },
+    comments: { count: commentsCount },
   };
 
   result.forEach((r) => {

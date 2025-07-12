@@ -11,6 +11,7 @@ import { paymentRoutes } from '../modules/Payment/payment.route';
 import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 import { ReactionRoute } from '../modules/Reaction/reaction.route';
 import { BlogRoute } from '../modules/Blogs/Blogs.route';
+import { PostShareRoute } from '../modules/PostShare/postShare.route';
 // import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 
 const router = express.Router();
@@ -64,6 +65,10 @@ const moduleRoutes = [
   {
     path: '/blogs',
     route: BlogRoute,
+  },
+  {
+    path: '/share',
+    route: PostShareRoute,
   },
 ];
 

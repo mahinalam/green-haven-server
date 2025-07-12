@@ -1,6 +1,6 @@
-import { ObjectId } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
-export interface ISavedPost {
+export interface ISavedPost extends Document {
   _id: ObjectId | string;
   user: ObjectId | string;
   post: ObjectId | string;

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import { ISavedPost } from './savedPost.interface';
 
-const SavedPostSchema: Schema = new Schema(
+const SavedPostSchema: Schema = new Schema<ISavedPost>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId || String,

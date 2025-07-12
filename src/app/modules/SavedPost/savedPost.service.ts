@@ -35,7 +35,12 @@ const createSavedPostIntoDB = async (userId: string, payload: ISavedPost) => {
 
 const getAllUserSavedPostsFromDB = async (query: Record<string, unknown>) => {
   const userSavedPostQuery = new QueryBuilder(
-    SavedPost.find().populate('user').populate('post'),
+    SavedPost.find()
+      .populate({
+        path: 'user',
+        select: '_id name email mobileNumber role profilePhoto createdAt',
+      })
+      .populate('post'),
     query
   )
     .filter()
