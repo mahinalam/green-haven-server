@@ -65,12 +65,21 @@ const updateCommentIntoDB = async (
   return result;
 };
 
+// delete commment
 const deleteCommentFromDB = async (commentId: string) => {
-  const result = await Comment.findByIdAndUpdate(commentId, {
+  // check is comment exists
+  const comment = await Comment.findById(commentId).select('_id');
+  if (!comment) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Comment does not exixts!');
+  }
+  if (comment.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Comment already deleted!');
+  }
+
+  await Comment.findByIdAndUpdate(commentId, {
     isDeleted: true,
-    new: true,
   });
-  return result;
+  return null;
 };
 
 export const CommentServices = {

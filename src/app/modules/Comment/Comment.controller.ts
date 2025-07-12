@@ -56,6 +56,5 @@ export const CommentControllers = {
   createComment,
   getAllComments,
   updateComment,
-  //   getItem,
   deleteComment,
 };
