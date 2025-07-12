@@ -58,7 +58,11 @@ const getFollowers = async (userId: string) => {
 
 //  Get users someone is following
 const getFollowingUsers = async (userId: string) => {
-  const result = await Follow.find({ follower: userId }).populate('following');
+  //   const result = await Follow.find({ follower: userId }).populate('following');
+  const result = await Follow.find({ follower: userId }).populate({
+    path: 'following',
+    select: '_id name role email mobileNumber profilePhoto',
+  });
   return result;
 };
 

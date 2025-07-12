@@ -12,6 +12,7 @@ import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.rout
 import { ReactionRoute } from '../modules/Reaction/reaction.route';
 import { BlogRoute } from '../modules/Blogs/Blogs.route';
 import { PostShareRoute } from '../modules/PostShare/postShare.route';
+import { FollowRoute } from '../modules/Follower/follower.route';
 // import { VerifyProfileRoutes } from '../modules/VerifyProfile/verifyProfile.route';
 
 const router = express.Router();
@@ -69,6 +70,10 @@ const moduleRoutes = [
   {
     path: '/share',
     route: PostShareRoute,
+  },
+  {
+    path: '/follow',
+    route: FollowRoute,
   },
 ];
 
