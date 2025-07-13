@@ -5,11 +5,10 @@ import { FollowController } from './follower.controller';
 
 const router = express.Router();
 
-router.get('/follow-user', auth(USER_ROLE.USER), FollowController.getFollowers);
 router.get(
-  '/following-user',
+  '/followers',
   auth(USER_ROLE.USER),
-  FollowController.getFollowingUser
+  FollowController.getFollowersAndFollowingUser
 );
 router.post('/follow-user', auth(USER_ROLE.USER), FollowController.followUser);
 router.post(

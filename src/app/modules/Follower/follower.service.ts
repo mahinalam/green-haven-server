@@ -43,32 +43,45 @@ const unFollowUser = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Follwer does not exists!');
   }
 
-  const result = await Follow.findOneAndDelete({
-    follower,
-    following,
-  });
+  const result = await Follow.findOneAndDelete(
+    {
+      follower,
+      following,
+    },
+    { new: true }
+  );
   return result;
 };
 
 // Get followers of a user
-const getFollowers = async (userId: string) => {
-  const result = await Follow.find({ following: userId }).populate('follower');
-  return result;
-};
+// const getFollowersAndFollowingUserFromDB = async (userId: string) => {
+//   const followers = await Follow.find({ following: userId }).populate({
+//     path: 'follower',
+//     select: '_id name role email mobileNumber profilePhoto',
+//   });
+//   const following = await Follow.find({ follower: userId }).populate({
+//     path: 'following',
+//     select: '_id name role email mobileNumber profilePhoto',
+//   });
 
-//  Get users someone is following
-const getFollowingUsers = async (userId: string) => {
-  //   const result = await Follow.find({ follower: userId }).populate('following');
-  const result = await Follow.find({ follower: userId }).populate({
-    path: 'following',
-    select: '_id name role email mobileNumber profilePhoto',
+//   return { followers: followers, followingUser: following };
+// };
+const getFollowersAndFollowingUserFromDB = async (userId: string) => {
+  const followers = await Follow.find({ following: userId }).populate({
+    path: 'follower',
+    select: '_id name profilePhoto email role',
   });
-  return result;
+
+  const following = await Follow.find({ follower: userId }).populate({
+    path: 'following',
+    select: '_id name profilePhoto email role',
+  });
+
+  return { followers, followingUser: following };
 };
 
 export const FollowServices = {
   followUser,
   unFollowUser,
-  getFollowers,
-  getFollowingUsers,
+  getFollowersAndFollowingUserFromDB,
 };
