@@ -1,46 +1,32 @@
 import { QueryBuilder } from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
 import { ICategory } from './category.interface';
 
 import Category from './category.model';
 
 const createCategoryIntoDB = async (payload: ICategory) => {
+  // check is category exists
+  const category = await Category.findOne({ name: payload.name });
+  if (category) {
+    throw new AppError(403, 'Category already exists!');
+  }
   const result = await Category.create(payload);
 
   return result;
 };
 
-// const getAllGardeningPostsFromDB = async (query: Record<string, unknown>) => {
-//   query = (await SearchItemByUserQueryMaker(query)) || query;
-
-//   // Date range search
-//   query = (await SearchItemByDateRangeQueryMaker(query)) || query;
-
-//   const itemQuery = new QueryBuilder(
-//     Item.find().populate('user').populate('category'),
-//     query
-//   )
-//     .filter()
-//     .search(ItemsSearchableFields)
-//     .sort()
-//     // .paginate()
-//     .fields();
-
-//   const result = await itemQuery.modelQuery;
-
-//   return result;
-// };
-
-const getAllCategoriesFromDB = async () => {
-  const result = await Category.find();
+const getAllCategoriesFromDB = async (query: Record<string, unknown>) => {
+  const categories = new QueryBuilder<any>(
+    Category.find().select('_id name createdAt'),
+    query
+  )
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+  const result = await categories.execWithMeta();
   return result;
 };
-
-// const getItemFromDB = async (itemId: string) => {
-//   const result = await Item.findById(itemId)
-//     .populate('user')
-//     .populate('category');
-//   return result;
-// };
 
 const updateCategoryIntoDB = async (
   categoryId: string,

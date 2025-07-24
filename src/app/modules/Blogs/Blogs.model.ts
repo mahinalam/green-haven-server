@@ -29,12 +29,12 @@ const blogSchema: Schema = new Schema(
 
 blogSchema.pre('find', function (next) {
   // Apply the `isDeleted: false` filter to every find query
-  this.where({ status: { $ne: 'rejected' } });
+  this.where({ isDeleted: false });
   next();
 });
 blogSchema.pre('findOne', function (next) {
   // Apply the `isDeleted: false` filter to every find query
-  this.where({ status: { $ne: 'rejected' } });
+  this.where({ isDeleted: false });
   next();
 });
 

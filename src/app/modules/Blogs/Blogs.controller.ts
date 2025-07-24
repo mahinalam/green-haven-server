@@ -49,19 +49,6 @@ const deleteBlog = catchAsync(async (req, res) => {
   });
 });
 
-// get users blogs
-const getUsersBlogs = catchAsync(async (req, res) => {
-  const { _id } = req.user;
-  const item = await BlogService.getUserBlogsFromDB(_id);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: 'Blogs retrieved successfully',
-    data: item,
-  });
-});
-
 // get single blog
 const getSingleBlog = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -74,19 +61,6 @@ const getSingleBlog = catchAsync(async (req, res) => {
     data: item,
   });
 });
-
-// const getItem = catchAsync(async (req, res) => {
-//   const itemId = req.params.id;
-//   const item = await ItemServices.getItemFromDB(itemId);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Item retrieved successfully',
-//     data: item,
-//   });
-// });
-
 // update blog
 const updateBlog = catchAsync(async (req, res) => {
   const item = await BlogService.updateBlogIntoDB(
@@ -105,7 +79,6 @@ export const BlogController = {
   createGuide,
   getAllGuides,
   deleteBlog,
-  getUsersBlogs,
   updateBlog,
   getSingleBlog,
   //   getAllItems,

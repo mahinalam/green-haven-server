@@ -37,8 +37,20 @@ const paymentSchema = new mongoose.Schema(
       default: 'pending',
       required: true,
     },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
+
+paymentSchema.pre('find', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
+  next();
+});
+paymentSchema.pre('findOne', function (next) {
+  // Apply the `isDeleted: false` filter to every find query
+  this.where({ isDeleted: false });
+  next();
+});
 
 export const Payment = model<IPayment>('Payment', paymentSchema);

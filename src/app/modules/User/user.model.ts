@@ -1,10 +1,9 @@
 /* eslint-disable no-useless-escape */
-import bcryptjs from 'bcryptjs';
-import { Schema, model } from 'mongoose';
-import config from '../../config';
-import { USER_ROLE, USER_STATUS } from './user.constant';
-import { IUserModel, TUser } from './user.interface';
-import { UNAVAILABLE_FOR_LEGAL_REASONS } from 'http-status';
+import bcryptjs from "bcryptjs";
+import { Schema, model } from "mongoose";
+import config from "../../config";
+import { USER_ROLE, USER_STATUS } from "./user.constant";
+import { IUserModel, TUser } from "./user.interface";
 
 const userSchema = new Schema<TUser, IUserModel>(
   {
@@ -23,7 +22,7 @@ const userSchema = new Schema<TUser, IUserModel>(
       //validate email
       match: [
         /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
-        'Please fill a valid email address',
+        "Please fill a valid email address",
       ],
     },
     password: {
@@ -31,13 +30,7 @@ const userSchema = new Schema<TUser, IUserModel>(
       required: true,
       select: 0,
     },
-    followers: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
-    following: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
-    status: {
-      type: String,
-      enum: Object.keys(USER_STATUS),
-      default: USER_STATUS.ACTIVE,
-    },
+
     passwordChangedAt: {
       type: Date,
     },
@@ -58,6 +51,10 @@ const userSchema = new Schema<TUser, IUserModel>(
       type: Boolean,
       default: false,
     },
+    isTopGardener: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -65,7 +62,7 @@ const userSchema = new Schema<TUser, IUserModel>(
   }
 );
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
   // hashing password and save into DB
@@ -79,24 +76,24 @@ userSchema.pre('save', async function (next) {
 });
 
 // set '' after saving password
-userSchema.post('save', function (doc, next) {
-  doc.password = '';
+userSchema.post("save", function (doc, next) {
+  doc.password = "";
   next();
 });
 
-userSchema.pre('find', function (next) {
+userSchema.pre("find", function (next) {
   // Apply the `isDeleted: false` filter to every find query
   this.where({ isDeleted: false });
   next();
 });
-userSchema.pre('findOne', function (next) {
+userSchema.pre("findOne", function (next) {
   // Apply the `isDeleted: false` filter to every find query
   this.where({ isDeleted: false });
   next();
 });
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+  return await User.findOne({ email }).select("+password");
 };
 
 userSchema.statics.isPasswordMatched = async function (
@@ -115,4 +112,4 @@ userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
   return passwordChangedTime > jwtIssuedTimestamp;
 };
 
-export const User = model<TUser, IUserModel>('User', userSchema);
+export const User = model<TUser, IUserModel>("User", userSchema);

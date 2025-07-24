@@ -1,6 +1,4 @@
 import httpStatus from 'http-status';
-import AppError from '../../errors/AppError';
-import { TImageFiles } from '../../interfaces/image.interface';
 import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { CategoryServices } from './category.service';
@@ -17,7 +15,7 @@ const createCategory = catchAsync(async (req, res) => {
 });
 
 const getAllCategories = catchAsync(async (req, res) => {
-  const categories = await CategoryServices.getAllCategoriesFromDB();
+  const categories = await CategoryServices.getAllCategoriesFromDB(req.query);
 
   sendResponse(res, {
     success: true,
@@ -26,18 +24,6 @@ const getAllCategories = catchAsync(async (req, res) => {
     data: categories,
   });
 });
-
-// const getItem = catchAsync(async (req, res) => {
-//   const itemId = req.params.id;
-//   const item = await ItemServices.getItemFromDB(itemId);
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Item retrieved successfully',
-//     data: item,
-//   });
-// });
 
 const updateCategory = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -67,6 +53,5 @@ export const CategoryControllers = {
   createCategory,
   getAllCategories,
   updateCategory,
-  //   getItem,
   deleteCategory,
 };

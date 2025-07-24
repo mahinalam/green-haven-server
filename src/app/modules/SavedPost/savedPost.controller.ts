@@ -1,12 +1,11 @@
 import httpStatus from 'http-status';
-import AppError from '../../errors/AppError';
-import { TImageFiles } from '../../interfaces/image.interface';
 import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { SavedPostServices } from './savedPost.service';
 
 const createSavedPost = catchAsync(async (req, res) => {
-  const item = await SavedPostServices.createSavedPostIntoDB(req.body);
+  const { _id } = req.user;
+  const item = await SavedPostServices.createSavedPostIntoDB(_id, req.body);
 
   sendResponse(res, {
     success: true,
@@ -17,7 +16,6 @@ const createSavedPost = catchAsync(async (req, res) => {
 });
 
 const getAllUserSavedPost = catchAsync(async (req, res) => {
-  console.log(req.query);
   const item = await SavedPostServices.getAllUserSavedPostsFromDB(req.query);
 
   sendResponse(res, {

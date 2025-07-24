@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Model, ObjectId } from 'mongoose';
-import { USER_ROLE, USER_STATUS } from './user.constant';
+import { Model, ObjectId } from "mongoose";
+import { USER_ROLE, USER_STATUS } from "./user.constant";
 
 export type TUser = {
   _id?: ObjectId | string;
@@ -18,6 +18,7 @@ export type TUser = {
   updatedAt?: Date;
   isDeleted: boolean;
   isVerified: boolean;
+  isTopGardener: boolean;
 };
 
 export interface IUserModel extends Model<TUser> {

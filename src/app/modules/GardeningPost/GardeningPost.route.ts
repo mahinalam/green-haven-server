@@ -1,24 +1,21 @@
-import express from 'express';
-import { multerUpload } from '../../config/multer.config';
-import { parseBody } from '../../middlewares/bodyParser';
-import validateImageFileRequest from '../../middlewares/validateImageFileRequest';
-import validateRequest from '../../middlewares/validateRequest';
-import { ImageFilesArrayZodSchema } from '../../zod/image.validation';
+import express from "express";
+import { multerUpload } from "../../config/multer.config";
+import { parseBody } from "../../middlewares/bodyParser";
+import validateImageFileRequest from "../../middlewares/validateImageFileRequest";
+import { ImageFilesArrayZodSchema } from "../../zod/image.validation";
 
-import auth from '../../middlewares/auth';
-import { USER_ROLE } from '../User/user.constant';
-import { GardeningPostControllers } from './GardeningPost.controller';
-
-// import { GardeningPostValidationSchema } from './GardeningPost.validation';
-// import { GardeningPostControllers } from '../SavedPost/savedPost.controller';
+import auth from "../../middlewares/auth";
+import { USER_ROLE } from "../User/user.constant";
+import { GardeningPostControllers } from "./GardeningPost.controller";
 
 const router = express.Router();
-router.get('/', GardeningPostControllers.getAllGardeningPosts);
-router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
+router.get("/", GardeningPostControllers.getAllGardeningPosts);
+router.get("/top-gardeners", GardeningPostControllers.getPostsByTopGardeners);
+router.get("/:id", GardeningPostControllers.getSingleGardeningPost);
 router.post(
-  '/',
+  "/",
   auth(USER_ROLE.USER),
-  multerUpload.fields([{ name: 'itemImages' }]),
+  multerUpload.fields([{ name: "itemImages" }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
   //   validateRequest(
@@ -27,33 +24,24 @@ router.post(
   GardeningPostControllers.createGardeningPost
 );
 router.put(
-  '/',
-  multerUpload.fields([{ name: 'itemImages' }]),
+  "/",
+  multerUpload.fields([{ name: "itemImages" }]),
   parseBody,
-  //   auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER),
   //   validateRequest(ItemValidation.updateItemValidationSchema),
   GardeningPostControllers.updateGardeningPost
 );
-router.delete('/:id', GardeningPostControllers.deleteGardeningPost);
-
-// router.get(
-//   '/get-user-posts/:id',
-//   GardeningPostControllers.getUserGardeningPosts
-// );
-
-// router.get('/:id', GardeningPostControllers.getSingleGardeningPost);
 
 router.patch(
-  '/',
-  //   auth(USER_ROLE.USER),
+  "/",
+  auth(USER_ROLE.USER),
   //   validateRequest(ItemValidation.updateItemValidationSchema),
   GardeningPostControllers.updateLikeStatus
 );
-
-// router.delete(
-//   '/:id',
-//   //  auth(USER_ROLE.USER),
-//   GardeningPostControllers.deleteGardeningPost
-// );
+router.delete(
+  "/:id",
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  GardeningPostControllers.deleteGardeningPost
+);
 
 export const GardeningPostRoutes = router;

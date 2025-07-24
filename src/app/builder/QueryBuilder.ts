@@ -1,91 +1,91 @@
-/* eslint-disable prefer-const */
-import { FilterQuery, Query } from 'mongoose';
+import { FilterQuery, Query, Document } from "mongoose";
 
-export class QueryBuilder<T> {
-  public query: Record<string, unknown>; //payload
+export class QueryBuilder<T extends Document> {
+  public query: Record<string, unknown>;
   public modelQuery: Query<T[], T>;
+  public filterConditions: FilterQuery<T> = {};
+  public limit: number = 10;
+  public skip: number = 0;
+  public page: number = 1;
 
   constructor(modelQuery: Query<T[], T>, query: Record<string, unknown>) {
     this.query = query;
     this.modelQuery = modelQuery;
   }
+
   search(searchableFields: string[]) {
-    let searchTerm = '';
+    const searchTerm = this.query.searchTerm as string;
 
-    if (this.query?.searchTerm) {
-      searchTerm = this.query.searchTerm as string;
+    if (searchTerm) {
+      this.modelQuery = this.modelQuery.find({
+        $or: searchableFields.map(
+          (field) =>
+            ({
+              [field]: new RegExp(searchTerm, "i"),
+            } as FilterQuery<T>)
+        ),
+      });
     }
-    // {title: {$regex: searchTerm}}
-    // {genre: {$regex: searchTerm}}
-    this.modelQuery = this.modelQuery.find({
-      $or: searchableFields.map(
-        (field) =>
-          ({
-            [field]: new RegExp(searchTerm, 'i'),
-          } as FilterQuery<T>)
-      ),
-    });
     return this;
   }
+
   paginate() {
-    let limit: number = Number(this.query?.limit || 10);
+    this.limit = Number(this.query.limit || 10);
+    this.page = Number(this.query.page || 1);
+    this.skip = (this.page - 1) * this.limit;
 
-    let skip: number = 0;
-
-    if (this.query?.page) {
-      const page: number = Number(this.query?.page || 1);
-      skip = Number((page - 1) * limit);
-    }
-
-    this.modelQuery = this.modelQuery.skip(skip).limit(limit);
-
+    this.modelQuery = this.modelQuery.skip(this.skip).limit(this.limit);
     return this;
   }
+
   sort() {
-    let sortBy = '-createdAt';
-
-    if (this.query?.sortBy) {
-      sortBy = this.query.sortBy as string;
-    }
-
+    const sortBy = (this.query.sortBy as string) || "-createdAt";
     this.modelQuery = this.modelQuery.sort(sortBy);
     return this;
   }
+
   fields() {
-    let fields = '';
-
-    if (this.query?.fields) {
-      fields = (this.query?.fields as string).split(',').join(' ') || '-__v';
+    if (this.query.fields) {
+      const fields = (this.query.fields as string).split(",").join(" ");
+      this.modelQuery = this.modelQuery.select(fields);
+    } else {
+      this.modelQuery = this.modelQuery.select("-__v");
     }
-
-    this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
-  // filter() {
-  //   const queryObj = { ...this.query };
-  //   const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
-
-  //   excludeFields.forEach((e) => delete queryObj[e]);
-
-  //   this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
-
-  //   return this;
-  // }
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
+    const excludeFields = ["searchTerm", "page", "limit", "sortBy", "fields"];
 
     excludeFields.forEach((e) => delete queryObj[e]);
 
-    // Always include isDeleted: false in the filter
-    const filterConditions: FilterQuery<T & { isDeleted: boolean }> = {
+    this.filterConditions = {
       ...queryObj,
-      isDeleted: false,
+      isDeleted: false, // Always exclude deleted docs
+    } as FilterQuery<T>;
+
+    this.modelQuery = this.modelQuery.find(this.filterConditions);
+    return this;
+  }
+
+  async execWithMeta(): Promise<{
+    data: T[];
+    meta: { total: number; page: number; limit: number };
+  }> {
+    const total = await this.modelQuery.model.countDocuments(
+      this.filterConditions
+    );
+    const data = await this.modelQuery.exec();
+
+    const meta = {
+      total,
+      page: this.page,
+      limit: this.limit,
+      skip: this.skip,
+      pageCount: Math.ceil(total / this.limit),
     };
 
-    this.modelQuery = this.modelQuery.find(filterConditions);
-
-    return this;
+    return { meta, data };
   }
 }

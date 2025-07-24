@@ -10,5 +10,5 @@ export interface IGuide {
   status?: 'pending' | 'approved' | 'rejected';
   createdAt?: Date;
   updatedAt?: Date;
-  isDeleted?: Boolean;
+  isDeleted?: boolean;
 }

@@ -1,34 +1,41 @@
-import httpStatus from 'http-status';
-import { QueryBuilder } from '../../builder/QueryBuilder';
-import AppError from '../../errors/AppError';
+import httpStatus from "http-status";
+import { QueryBuilder } from "../../builder/QueryBuilder";
+import AppError from "../../errors/AppError";
 
 // import GardeningPost from './GardeningPost.model';
-import { ISavedPost } from './savedPost.interface';
-import SavedPost from './savedPost.model';
-import GardeningPost from '../GardeningPost/GardeningPost.model';
+import { ISavedPost } from "./savedPost.interface";
+import SavedPost from "./savedPost.model";
+import GardeningPost from "../GardeningPost/GardeningPost.model";
 
 const createSavedPostIntoDB = async (userId: string, payload: ISavedPost) => {
   // check is post exists
   const post = await GardeningPost.findById(payload.post);
+  console.log({ post });
 
   // if not throw exception
   if (!post) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Saved post already exists!');
+    throw new AppError(httpStatus.NOT_FOUND, "Post not found.");
   }
 
   // check is post is already deleted
   if (post.isDeleted) {
-    throw new AppError(httpStatus.FORBIDDEN, 'post already deleted!');
+    throw new AppError(httpStatus.FORBIDDEN, "post already deleted!");
   }
   // chcek is sdaved post exists
   const isSavedPostExists = await SavedPost.findOne({
     user: userId,
     post: payload.post,
   });
+  console.log({ isSavedPostExists });
   if (isSavedPostExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Saved post already exists!');
+    throw new AppError(409, "Saved post already exists!");
   }
-  const result = await SavedPost.create(payload);
+
+  const updatedData = {
+    ...payload,
+    user: userId,
+  };
+  const result = await SavedPost.create(updatedData);
 
   return result;
 };
@@ -37,67 +44,34 @@ const getAllUserSavedPostsFromDB = async (query: Record<string, unknown>) => {
   const userSavedPostQuery = new QueryBuilder(
     SavedPost.find()
       .populate({
-        path: 'user',
-        select: '_id name email mobileNumber role profilePhoto createdAt',
+        path: "user",
+        select: "_id name email mobileNumber role profilePhoto createdAt",
       })
-      .populate('post'),
+      .populate({
+        path: "post",
+        select: "_id title content images isPremium createdAt status",
+      }),
     query
   )
     .filter()
     .sort()
-    // .paginate()
+    .paginate()
     .fields();
 
-  const result = await userSavedPostQuery.modelQuery;
+  const result = await userSavedPostQuery.execWithMeta();
 
   return result;
 };
 
-// const getAllGardeningPostsFromDB = async () => {
-//   const result = await GardeningPost.find().populate('user');
-//   // .populate('category');
-//   return result;
-// };
-
-// const getUserGardeningPostsFromDB = async (userId: string) => {
-//   const result = await GardeningPost.find({ user: userId }).populate('user');
-//   // .populate('category');
-//   return result;
-// };
-
-// const getSingleGardeningPostFromDB = async (postId: string) => {
-//   const result = await GardeningPost.findById(postId)
-//     .populate('user')
-//     // .populate('category');
-//     .populate('comments');
-//   return result;
-// };
-
-// const updateGardeningPostInDB = async (
-//   postId: string,
-//   payload: Partial<IGardeningPost>
-// ) => {
-//   const result = await GardeningPost.findByIdAndUpdate(postId, payload, {
-//     new: true,
-//   });
-// if (result) {
-//   await addDocumentToIndex(result, 'items');
-// } else {
-//   throw new Error(`Item with ID ${itemId} not found.`);
-// }
-//   return result;
-// };
-
 // delete wishlist item
 const deleteSavedPostFromDB = async (wishlistId: string) => {
-  console.log({ wishlistId });
   // check is wishlist item exists
   const post = await SavedPost.findOne({
     _id: wishlistId,
     isDeleted: false,
-  }).select('_id');
+  }).select("_id");
   if (!post) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Wishlist item does not exixts!');
+    throw new AppError(httpStatus.NOT_FOUND, "Wishlist item does not exixts!");
   }
   const result = await SavedPost.updateOne(
     { _id: wishlistId },

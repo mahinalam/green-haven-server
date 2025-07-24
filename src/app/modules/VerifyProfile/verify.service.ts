@@ -1,10 +1,8 @@
 import { Payment } from '../Payment/payment.model';
 import { initiatePayment } from '../Payment/payment.utils';
-import { User } from '../User/user.model';
-// import { initiatePayment } from './payment.utils';
 
 const verifyProfileIntoDB = async (user: Record<string, unknown>) => {
-  const { _id, name, email, mobileNumber, profilephoto } = user;
+  const { _id, name, email, mobileNumber } = user;
 
   const timestamp = Date.now();
   const randomStr = Math.random().toString(36).substring(2, 10);
@@ -35,24 +33,3 @@ const verifyProfileIntoDB = async (user: Record<string, unknown>) => {
 export const VerifyProfileServices = {
   verifyProfileIntoDB,
 };
-
-import { Types } from 'mongoose';
-
-export interface IPayment {
-  // Unique identifier for the payment transaction
-  transactionId: string;
-
-  // Reference to the user who made the payment
-  userId: Types.ObjectId;
-
-  // Payment amount and currency
-  totalPrice: number;
-  currency: 'USD' | 'EUR' | 'GBP' | 'BDT' | 'INR';
-
-  // Payment status
-  paymentStatus: 'pending' | 'completed' | 'failed';
-
-  // Timestamps for creation and update
-  createdAt?: Date;
-  updatedAt?: Date;
-}

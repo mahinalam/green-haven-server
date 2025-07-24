@@ -5,7 +5,7 @@ export interface IReaction {
   user: Types.ObjectId;
   post: Types.ObjectId;
   type: 'like' | 'dislike';
-  isDeleted: Boolean;
+  isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

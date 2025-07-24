@@ -1,5 +1,5 @@
 // models/Follow.ts
-import mongoose, { Schema, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { IFollow } from './follower.interface';
 
 const followSchema = new Schema<IFollow>(

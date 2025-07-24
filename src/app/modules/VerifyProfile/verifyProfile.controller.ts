@@ -7,7 +7,6 @@ import { VerifyProfileServices } from './verify.service';
 const verifyProfile = catchAsync(async (req, res) => {
   const user = req.user;
   const payment = await VerifyProfileServices.verifyProfileIntoDB(user);
-  console.log(user);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

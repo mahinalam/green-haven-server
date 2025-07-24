@@ -18,7 +18,7 @@ const GardeningPostSchema: Schema = new Schema(
     status: {
       type: String,
       enum: ['published', 'draft', 'archived'],
-      default: 'draft',
+      default: 'published',
     },
   },
   { timestamps: true }

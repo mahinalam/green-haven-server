@@ -1,17 +1,17 @@
-import mongoose from 'mongoose';
-import { Schema } from 'mongoose';
-import { ISavedPost } from './savedPost.interface';
+import mongoose from "mongoose";
+import { Schema } from "mongoose";
+import { ISavedPost } from "./savedPost.interface";
 
 const SavedPostSchema: Schema = new Schema<ISavedPost>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId || String,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     post: {
       type: mongoose.Schema.Types.ObjectId || String,
-      ref: 'GardeningPost',
+      ref: "GardeningPost",
       required: true,
     },
     isDeleted: { type: Boolean, default: false },
@@ -20,6 +20,15 @@ const SavedPostSchema: Schema = new Schema<ISavedPost>(
   { timestamps: true }
 );
 
-const SavedPost = mongoose.model<ISavedPost>('SavedPost', SavedPostSchema);
+SavedPostSchema.pre("find", function (next) {
+  this.where({ isDeleted: false });
+  next();
+});
+SavedPostSchema.pre("findOne", function (next) {
+  this.where({ isDeleted: false });
+  next();
+});
+
+const SavedPost = mongoose.model<ISavedPost>("SavedPost", SavedPostSchema);
 
 export default SavedPost;

@@ -4,11 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: green;
+        }
+        p {
+            margin: 20px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #F57224;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        a:hover {
+            background-color: #c44e0b;
+        }
+    </style>
 </head>
 <body>
     <div>
         <h1>{{message}}</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus numquam eligendi minus velit quia nobis eius dicta in officiis quasi.</p>
+     <p>
+    Thank you for verifying your profile!  
+    Your account is now successfully verified and fully activated.  
+    You can now enjoy all the features of our platform without any restrictions.  
+    If you have any questions or feedback, feel free to reach out to our support team.
+</p>
+        
+        <!-- Navigate to Review Page -->
+        <a href="http://localhost:3000">Go Home</a>
     </div>
 </body>
 </html>

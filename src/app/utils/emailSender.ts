@@ -15,8 +15,8 @@ const sendEmail = async (email: string, html: string, subject: string) => {
     port: 587,
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: config.sender_email,
-      pass: config.sender_app_password,
+      user: (config as any).sender_email,
+      pass: (config as any).sender_app_password,
     },
     tls: {
       rejectUnauthorized: false,
