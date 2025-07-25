@@ -12,11 +12,11 @@ router.get(
   auth(USER_ROLE.USER),
   paymentControler.isUserVerified
 );
-router.post(
-  "/verify-profile",
-  auth(USER_ROLE.USER),
-  paymentControler.verifyProfile
-);
+// router.post(
+//   "/verify-profile",
+//   auth(USER_ROLE.USER),
+//   paymentControler.verifyProfile
+// );
 router.post("/confirmation", paymentControler.confirmationController);
 router.delete(
   "/:id",
