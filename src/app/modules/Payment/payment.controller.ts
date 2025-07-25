@@ -16,21 +16,6 @@ const verifyProfile = catchAsync(async (req, res) => {
   });
 });
 
-// const confirmationController = async (req: Request, res: Response) => {
-//   const { transactionId, status } = req.query;
-
-//   const result = await paymentServices.confirmationService(
-//     transactionId as string,
-//     status as string
-//   );
-//   sendResponse(res, {
-//     // success: true,
-//     // statusCode: httpStatus.OK,
-//     // message: "Payment confirmation retrived successfully.",
-//     data: result,
-//   });
-// };
-
 const confirmationController = async (req: Request, res: Response) => {
   const { transactionId, status } = req.query;
 
