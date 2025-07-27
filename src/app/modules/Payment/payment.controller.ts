@@ -3,10 +3,10 @@ import { paymentServices } from "./payment.service";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
+import config from "../../config";
 
 const verifyProfile = catchAsync(async (req, res) => {
   const user = req.user;
-  // console.log({ user });
   const payment = await paymentServices.verifyProfileIntoDB(user);
   sendResponse(res, {
     success: true,
@@ -17,13 +17,19 @@ const verifyProfile = catchAsync(async (req, res) => {
 });
 
 const confirmationController = async (req: Request, res: Response) => {
-  const { transactionId, status } = req.query;
+  const successPayment = req.body;
 
-  const result = await paymentServices.confirmationService(
-    transactionId as string,
-    status as string
+  const isVerifiedSuccess = await paymentServices.confirmationService(
+    successPayment
   );
-  res.send(result);
+  if (!isVerifiedSuccess) {
+    res.redirect(
+      `${config.payment_cancel_url}?token=${config.valid_success_token}`
+    );
+  }
+  res.redirect(
+    `${config.payment_cancel_url}?token=${config.valid_failed_token}`
+  );
 };
 
 const getAllPayments = async (req: Request, res: Response) => {

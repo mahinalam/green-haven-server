@@ -5,27 +5,61 @@ import { readFileSync } from "fs";
 import { Payment } from "./payment.model";
 import { User } from "../User/user.model";
 import { QueryBuilder } from "../../builder/QueryBuilder";
+import config from "../../config";
+import axios from "axios";
+import mongoose from "mongoose";
 
-// VERIFY PROFILE
+// Verify profile using ssl commerz
+// step 1 -> initiate payment
+
 const verifyProfileIntoDB = async (user: Record<string, unknown>) => {
-  console.log("from service", user);
   const { _id, name, email, mobileNumber } = user;
 
   const timestamp = Date.now();
   const randomStr = Math.random().toString(36).substring(2, 10);
   const transactionId = `txn_${timestamp}_${randomStr}`;
 
-  const paymentData = {
-    transactionId,
-    totalPrice: 1000,
-    customerName: name,
-    customerEmail: email,
-    customerMobileNumber: mobileNumber,
+  const initiate = {
+    store_id: config.store_id,
+    store_passwd: config.store_pass,
+    total_amount: 1000,
+    currency: "BDT",
+    tran_id: transactionId,
+    success_url: `${config.payment_success_url}`,
+    fail_url: `${config.payment_fail_url}`,
+    cancel_url: config.payment_cancel_url,
+    ipn_url: config.payment_success_url,
+    shipping_method: "Courier",
+    product_name: "Computer.",
+    product_category: "Electronic",
+    product_profile: "general",
+    cus_name: name,
+    cus_email: email,
+    cus_add1: "Dhaka",
+    cus_add2: "Dhaka",
+    cus_city: "Dhaka",
+    cus_state: "Dhaka",
+    cus_postcode: "1000",
+    cus_country: "Bangladesh",
+    cus_phone: mobileNumber,
+    cus_fax: "01711111111",
+    ship_name: "Customer Name",
+    ship_add1: "Dhaka",
+    ship_add2: "Dhaka",
+    ship_city: "Dhaka",
+    ship_state: "Dhaka",
+    ship_postcode: 1000,
+    ship_country: "Bangladesh",
   };
-  //   return result;
 
-  const paymentSession = await initiatePayment(paymentData);
-  //   console.log(paymentSession);
+  const iniResponse = await axios({
+    url: "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
+    method: "POST",
+    data: initiate,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
 
   const paymentInfoSavedToDB = {
     transactionId,
@@ -34,38 +68,54 @@ const verifyProfileIntoDB = async (user: Record<string, unknown>) => {
     paymentStatus: "pending",
   };
   await Payment.create(paymentInfoSavedToDB);
-  return paymentSession;
+
+  const gatewayUrl = iniResponse?.data?.GatewayPageURL;
+  return { gatewayUrl };
 };
 
-const confirmationService = async (transactionId: string, status: string) => {
-  const verifyResponse = await verifyPayment(transactionId);
+const confirmationService = async (paymentSuccess: any) => {
+  // validation
+  const { data } = await axios.get(
+    `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${paymentSuccess?.val_id}&store_id=${config.store_id}&store_passwd=${config.store_pass}`
+  );
 
-  let message = "";
-
-  if (verifyResponse && verifyResponse.pay_status === "Successful") {
-    // update payment status in payment collection
-    const result = await Payment.findOneAndUpdate(
-      { transactionId },
-      {
-        paymentStatus: "paid",
-      },
-      { new: true }
-    ).populate("userId");
-
-    // update isVerified filed of user
-    const userId = result!.userId._id;
-    await User.findByIdAndUpdate(userId, { isVerified: true }, { new: true });
-
-    message = "Your profile has been successfully verified!";
-  } else {
-    message = "Verification Failed!";
+  if (data?.status !== "VALID") {
+    return false;
   }
-  const filePath = join(__dirname, "../../../views/confirmation.html");
-  let template = readFileSync(filePath, "utf-8");
 
-  template = template.replace(`{{message}}`, message);
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
 
-  return template;
+    // update payment status
+    const result = await Payment.findOneAndUpdate(
+      { transactionId: data.tran_id },
+      {
+        $set: {
+          paymentStatus: "paid",
+        },
+      }
+    )
+      .populate({ path: "userId", select: "_id" })
+      .select("_id");
+
+    const userId = result?.userId?._id;
+
+    // update isVerified field to user
+    await User.findByIdAndUpdate(
+      userId,
+      { $set: { isVerified: true } },
+      { new: true }
+    );
+    await session.commitTransaction();
+    await session.endSession();
+
+    return true;
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+  }
 };
 
 const getAllPaymentsFromDB = async (query: Record<string, unknown>) => {

@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
-import path from 'path';
+import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config({ path: path.join((process.cwd(), '.env')) });
+dotenv.config({ path: path.join((process.cwd(), ".env")) });
 
 export default {
   NODE_ENV: process.env.NODE_ENV,
@@ -21,4 +21,11 @@ export default {
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   sender_email: process.env.SENDER_EMAIL,
   sender_app_password: process.env.SENDER_APP_PASS,
+  payment_success_url: process.env.PAYMENT_SUCCESS_URL,
+  payment_fail_url: process.env.PAYMENT_FAIL_URL,
+  payment_cancel_url: process.env.PAYMENT_CANCEL_URL,
+  store_id: process.env.STORE_ID,
+  store_pass: process.env.STORE_PASSWORD,
+  valid_success_token: process.env.VALID_SUCCESS_TOKEN,
+  valid_failed_token: process.env.VALID_FAILED_TOKEN,
 };

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import dotenv from "dotenv";
+import config from "../../config";
 dotenv.config();
 
 export const initiatePayment = async (paymentData: any) => {
@@ -8,9 +9,9 @@ export const initiatePayment = async (paymentData: any) => {
     store_id: process.env.STORE_ID,
     signature_key: process.env.SIGNATURE_KEY,
     tran_id: paymentData.transactionId,
-    success_url: `${process.env.PAYMENT_SUCCESS_URL}?transactionId=${paymentData.transactionId}&status=success`,
-    fail_url: `${process.env.PAYMENT_FAIL_URL}?status=failed`,
-    cancel_url: process.env.PAYMENT_CANCEL_URL,
+    success_url: `${config.payment_success_url}?transactionId=${paymentData.transactionId}&status=success`,
+    fail_url: `${config.payment_fail_url}?status=failed`,
+    cancel_url: config.payment_cancel_url,
     amount: paymentData.totalPrice,
     currency: "BDT",
     desc: "Merchant Registration Payment",
