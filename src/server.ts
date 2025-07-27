@@ -1,21 +1,21 @@
-import { Server } from 'http';
-import mongoose from 'mongoose';
-import app from './app';
-import config from './app/config';
-import { seed } from './app/utils/seeding';
+import { Server } from "http";
+import mongoose from "mongoose";
+import app from "./app";
+import config from "./app/config";
+import { seed } from "./app/utils/seeding";
 
 let server: Server;
 
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled Rejection:', error);
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled Rejection:", error);
   if (server) {
     server.close(() => {
-      console.error('Server closed due to unhandled rejection');
+      console.error("Server closed due to unhandled rejection");
       process.exit(1);
     });
   } else {
@@ -26,25 +26,25 @@ process.on('unhandledRejection', (error) => {
 async function bootstrap() {
   try {
     await mongoose.connect(config.db_url as string);
-    console.log('🛢 Database connected successfully');
+    console.log("🛢 Database connected successfully");
     await seed();
 
     server = app.listen(config.port, () => {
       console.log(`🚀 Application is running on port ${config.port}`);
     });
   } catch (err) {
-    console.error('Failed to connect to database:', err);
+    console.error("Failed to connect to database:", err);
     process.exit(1);
   }
 }
 
 bootstrap();
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received');
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received");
   if (server) {
     server.close(() => {
-      console.log('Server closed due to SIGTERM');
+      console.log("Server closed due to SIGTERM");
       process.exit(0);
     });
   } else {
@@ -52,11 +52,11 @@ process.on('SIGTERM', () => {
   }
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received');
+process.on("SIGINT", () => {
+  console.log("SIGINT received");
   if (server) {
     server.close(() => {
-      console.log('Server closed due to SIGINT');
+      console.log("Server closed due to SIGINT");
       process.exit(0);
     });
   } else {
