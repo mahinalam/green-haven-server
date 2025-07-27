@@ -23,7 +23,7 @@ const confirmationController = async (req: Request, res: Response) => {
     successPayment
   );
   console.log({ isVerifiedSuccess });
-  if (!isVerifiedSuccess) {
+  if (isVerifiedSuccess) {
     return res.redirect(
       `${config.payment_cancel_url}/verify/failed?token=${config.valid_failed_token}`
     );
