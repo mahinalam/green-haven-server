@@ -78,7 +78,7 @@ const confirmationService = async (paymentSuccess: any) => {
   const { data } = await axios.get(
     `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${paymentSuccess?.val_id}&store_id=${config.store_id}&store_passwd=${config.store_pass}`
   );
-
+  console.log({ data });
   if (data?.status !== "VALID") {
     return false;
   }
